@@ -1,66 +1,72 @@
+exports.up = function(knex, Promise)
+{
+	return knex.schema
 
-exports.up = function(knex, Promise) {
-  return knex.schema
+	//<rating>
+	.createTable('rating', function(tbl)
+	{
+		//PK
+		tbl.increments();
 
-  // rating table
-  .createTable('rating', function(tbl) {
-    // pk
-    tbl.increments();
+		//UQ
+		tbl.string('name', 5).notNullable().unique('uq_rating_name');
+	})
 
-    // uq
-    tbl.string('name', 5).notNullable().unique('uq_rating_name');
-  })
+	//<movie>
+	.createTable('movie', function(tbl)
+	{
+		//PK
+		tbl.increments();
 
-  // mavie table
-  .createTable('movie', function(tbl) {
-    // pk
-    tbl.increments();
+		//FK
+		tbl.integer('rating_id').notNullable().references('id').inTable('rating');
+		tbl.integer('director_id').references('id').inTable('person');
 
-    // fk
-    tbl.integer('rating_id').notNullable().references('id').inTable('rating');
-    tbl.integer('director_id').notNullable().references('id').inTable('person');
+		//Fields
+		tbl.string('title', 200).notNullable().defaultTo('');
+        tbl.string('overview', 999);
+        tbl.integer('releaseyr');
+        tbl.integer('score').notNullable().defaultTo(7);
+        tbl.integer('runtime').notNullable().defaultTo(90);
+        tbl.date('lastplaydt');
+	})
 
-    // fields
-    tbl.string('title', 200).notNullable().defaultTo('');
-    tbl.string('overview', 999);
-    tbl.integer('releaseyr');
-    tbl.integer('score').notNullable().defaultTo(7);
-    tbl.integer('runtime').notNullable().defaultTo(90);
-    tbl.date('lastplaydt');
-  })
+	//<tag>
+    .createTable('tag', function (tbl)
+    {
+        //PK
+        tbl.increments();
 
-  // rating tag
-  .createTable('tag', function(tbl) {
-    // pk
-    tbl.increments();
+        //UQ
+        tbl.string('name', 30).notNullable().unique('uq_tag_name');
+    })
 
-    // uq
-    tbl.string('name', 5).notNullable().unique('uq_tag_name');
-  })
+	//<tag_movie>
+    .createTable('tag_movie', function (tbl)
+    {
+        //PK/FK
+        tbl.integer('tag_id').notNullable().references('id').inTable('tag').onDelete('CASCADE');
+		tbl.integer('movie_id').notNullable().references('id').inTable('movie').onDelete('CASCADE');
+		tbl.primary(['tag_id', 'movie_id']);
+    })
 
-  // tag_movie
-  .createTable('tag_movie', function(tbl) {
-    // pk/fk
-    tbl.integer('tag_id').notNullable().references('id').inTable('tag').onDelete('CASCADE');
-    tbl.integer('movie_id').notNullable().references('id').inTable('movie').onDelete('CASCADE');
-    tbl.primary(['tag_id', 'movie_id'])
-  })
-
-  // actor_movie
-  .createTable('actor_movie', function(tbl) {
-    // pk/fk
-    tbl.integer('person_id').notNullable().references('id').inTable('person').onDelete('CASCADE');
-    tbl.integer('movie_id').notNullable().references('id').inTable('movie').onDelete('CASCADE');
-    tbl.primary(['person_id', 'movie_id'])
-  })
+	//<actor_movie>
+    .createTable('actor_movie', function (tbl)
+    {
+        //PK/FK
+        tbl.integer('person_id').notNullable().references('id').inTable('person').onDelete('CASCADE');
+		tbl.integer('movie_id').notNullable().references('id').inTable('movie').onDelete('CASCADE');
+		tbl.primary(['person_id', 'movie_id']);
+    });
 
 };
 
-exports.down = function(knex, Promise) {
-  return knex.schema
-    .dropTable('actor_movie')
-    .dropTable('tag_movie')
-    .dropTable('tag')
-    .dropTable('movie')
-    .dropTable('rating');
+exports.down = function(knex, Promise)
+{
+	return knex.schema
+		.dropTable('actor_movie')
+        .dropTable('tag_movie')
+        .dropTable('tag')
+        .dropTable('movie')
+        .dropTable('rating');
 };
