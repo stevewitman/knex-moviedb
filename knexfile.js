@@ -15,7 +15,7 @@ module.exports =
     connection:
     {
       host    : 'localhost',
-      user    : 'postgres',
+      user    : 'sw',
       database: 'movie',
       password: 'sprite',
     },
