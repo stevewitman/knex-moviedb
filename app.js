@@ -2,10 +2,12 @@
 
 var db = require("./db");
 var screen = require("./screen");
+var mRepo = require("./movie-repo");
+var pRepo = require("./person-repo");
 
 screen.clear();
 
-db('movie').count().then(function(result) {
+mRepo.getMovie(2).then(function(result) {
   screen.write(result, 'pretty');
 }).catch(function(err) {
   console.log(err);
