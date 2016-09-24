@@ -7,7 +7,7 @@ var pRepo = require("./person-repo");
 
 screen.clear();
 
-mRepo.getMovie(2).then(function(result) {
+mRepo.getForEdit(2).then(function(result) {
   screen.write(result, 'pretty');
 }).catch(function(err) {
   console.log(err);
